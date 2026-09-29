@@ -1,0 +1,39 @@
+import urllib.request, json
+
+ip = "192.168.137.50"
+port = "8080"
+
+def send(data):
+    req = urllib.request.Request(
+        'http://{}:{}'.format(ip, port),
+        data=json.dumps(data).encode(),
+        headers={'Content-Type': 'application/json'}
+    )
+    resp = urllib.request.urlopen(req)
+    return json.loads(resp.read().decode('utf-8'))
+
+def cam(command):
+    if command == "dist": ok, result = send(["get_distance"])
+    elif command == "xydist": ok, result = send(["get_xy_distance", 320, 240])
+    elif command == "colors": ok, result = send(["get_colors"])
+    elif command == "stop": ok, result = send(["stop_camera"])
+    else: return None
+    if ok == True: return result
+    else: return None
+    
+def printf(any): tp_log("{}".format(any))
+
+def gripper(grip):
+    wait(0.5)
+    if grip == True: set_tool_digital_outputs([1,-2])
+    else: set_tool_digital_outputs([2,-1])
+    wait(0.5)
+   
+gripper(False)
+
+printf(cam("colors"))
+printf(cam("colors"))
+
+printf(cam("dist"))
+
+printf(cam("dist"))
