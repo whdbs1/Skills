@@ -1,0 +1,200 @@
+import urllib.request
+import json
+
+
+ip = "192.168.137.10"
+port = "8080"
+
+
+set_velx(1000)
+set_accx(1000)
+
+
+def grip(state):
+    wait(0.5)
+
+    if state == True:
+        set_tool_digital_outputs([1, -2])   # 잡기
+    else:
+        set_tool_digital_outputs([2, -1])   # 놓기
+
+    wait(0.5)
+
+
+def up(pos, z):
+    return trans(pos, [0, 0, z, 0, 0, 0])
+
+
+# -------------------------
+# 위치
+# -------------------------
+
+h = posx(-127.25, 368, 546, 0, -90, -90)
+
+#p1 = posx(175.74, 491.24, 233.98, 180, 90, 90)
+#p2 = posx(135.74, 491.24, 233.98, 180, 90, 90)
+p3 = posx(95.74, 491.24, 233.98, 180, 90, 90)
+
+#p4 = posx(175.74, 531.24, 233.98, 180, 90, 90)
+#p5 = posx(135.74, 531.24, 233.98, 180, 90, 90)
+p6 = posx(97.1, 533.1, 234.02, 180, 90, 90)
+
+p7 = posx(-64.86, 491.49, 233.28, 0, -90, -90)
+p8 = posx(-104.86, 491.49, 233.28, 0, -90, -90)
+p9 = posx(-144.86, 491.49, 233.28, 0, -90, -90)
+
+p10 = posx(-64.86, 531.49, 233.28, 0, -90, -90)
+p11 = posx(-104.86, 531.49, 233.28, 0, -90, -90)
+p12 = posx(-144.86, 531.49, 233.28, 0, -90, -90)
+
+
+blue_pos1 = posx(175.74, 491.24, 233.98, 180, 90, 90)
+blue_pos2 = posx(135.74, 491.24, 233.98, 180, 90, 90)
+blue_pos4 = posx(175.74, 531.24, 233.98, 180, 90, 90)
+blue_pos5 = posx(135.74, 531.24, 233.98, 180, 90, 90)
+
+s1 = posx(298.64, 292.55, 320.22, 90, 89.46, 60)
+s2 = posx(251.49, 291.78, 401.88, 90, 89.46, 60)
+cmr = posx(251.49, 291.78, 401.88, 90, 89.46, 68.94)
+
+
+normal_positions = [p3,p6,p7,p8,p9,p10,p11,p12]
+
+blue_positions = [
+    blue_pos1,
+    blue_pos2,
+    blue_pos4,
+    blue_pos5,    
+]
+
+# -------------------------
+# 카메라 통신
+# -------------------------
+
+def send(data):
+    req = urllib.request.Request(
+        "http://{}:{}".format(ip, port),
+        data=json.dumps(data).encode(),
+        headers={"Content-Type": "application/json"}
+    )
+
+    resp = urllib.request.urlopen(req)
+
+    return json.loads(
+        resp.read().decode("utf-8")
+    )
+
+
+def cam(command):
+    if command == "colors":
+        ok, result = send(["get_colors"])
+
+    elif command == "dist":
+        ok, result = send(["get_distance"])
+
+    else:
+        return None
+
+    if ok == True:
+        return result
+
+    return None
+
+
+def printf(value):
+    tp_log("{}".format(value))
+
+
+# -------------------------
+# 시작
+# -------------------------
+
+grip(False)
+
+movel(h)
+wait(2)
+movel(s2)
+
+normal_index = 0
+blue_index = 0
+
+# 총 6개 물체 처리
+for i in range(12):
+
+    # 카메라 위치로 이동
+    movel(s2)
+    movel(cmr)
+
+    wait(0.5)
+
+    # 색 확인
+    colors = cam("colors")
+    printf(colors)
+
+    # 아무것도 없으면 바로 홈으로 가고 종료
+    if colors is None or len(colors) == 0:
+        printf("No color detected")
+        movel(h)
+        break
+
+    # 색이 있을 때만 다시 s2로 이동
+    movel(s2)
+
+    # 여기부터 물체 잡기
+    movel(s1)
+    grip(True)
+
+    movel(s2)
+
+
+    # -------------------------
+    # 4. 파란색이면 blue_pos
+    # -------------------------
+
+    if colors is None or len(colors) == 0:
+
+        printf("No color detected")
+        movel(h)
+    
+    elif "Blue" in colors:
+    
+        printf("Blue detected")
+    
+        target = blue_positions[blue_index]
+    
+        movel(up(target, 80))
+        movel(target)
+    
+        grip(False)
+    
+        movel(up(target, 80))
+    
+        blue_index = blue_index + 1
+    
+    else:
+    
+        printf("Normal detected")
+    
+        target = normal_positions[normal_index]
+    
+        movel(up(target, 80))
+        movel(target)
+    
+        grip(False)
+    
+        movel(up(target, 80))
+    
+        normal_index = normal_index + 1
+
+    # -------------------------
+    # 6. 다음 물체 확인하러 복귀
+    # -------------------------
+
+    movel(s2)
+
+
+# -------------------------
+# 작업 종료
+# -------------------------
+
+movel(h)

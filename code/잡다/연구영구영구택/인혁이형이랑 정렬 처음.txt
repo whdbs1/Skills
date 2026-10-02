@@ -1,0 +1,41 @@
+def ch(m,s,e):
+    m = list(m)
+    m[s],m[e] = m[e],m[s]
+    return ''.join(m)
+
+
+def array():
+    m = '100000000' # 초기맵
+    leaf = '000000001' # 정렬맵
+    q = deque([m])
+    li,vst = [],[]
+    di = {}
+    while 1:
+        cur = q.popleft()
+        if cur == leaf:
+            break
+        for i in range(9):
+            if cur[i] == '0': # i == 0
+                for j in arrow(i):
+                    if cur[j] != '0': # j == pack
+                        li.append(ch(cur,i,j))
+        for i in li:
+            if i not in vst:
+                di[i] = cur
+                vst.append(i)
+                q.append(i)
+    path = []
+    print(cur)
+    while cur != m:
+        cur = di[cur]
+        path.append(cur)
+    return path[::-1]
+        pass
+    print(di['200000001'])
+    
+    
+
+    
+##        print(li)
+##        exit()
+print(array())
