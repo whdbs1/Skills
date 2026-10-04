@@ -58,3 +58,13 @@ def aro(x,y,f,n,w=0): # 상하좌우 위아래
         li.append(n+1)
     return li 
 
+def aro(n):
+    res = []
+    dy = [1,0,-1,0]
+    dx = [0,1,0,-1]
+    y,x = (n//mx)%my,n%mx
+    for i in range(4):
+        y1,x1 = y+dy[i],x+dx[i]
+        if -1<y1<mx and -1<x1<mx:
+            res.append(y1*mx+x1)
+    return res
