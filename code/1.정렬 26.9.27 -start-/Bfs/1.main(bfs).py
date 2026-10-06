@@ -1,6 +1,6 @@
 from collections import deque
-import random
-
+import time
+sm,em = '325671400','123456700'
 def aro(n):
     li = []
     for x in [-3,+3,-1,+1]:
@@ -11,17 +11,10 @@ def aro(n):
 def exc(m,s,e):
     m = list(m)
     m[s],m[e] = m[e],m[s]
-    m = ''.join(m)
-    return m
-
-def bfs(m):
-
-    sm = list(m)
-    random.shuffle(sm)
-    sm = ''.join(sm)
+    return ''.join(m)
     
-    em = m
-    
+
+def bfs():
     q = deque([sm])
     vst, par = {sm},{}
     while q:
@@ -48,10 +41,4 @@ def bfs(m):
         cur = p
     path.append(sm)
 
-    return ('step:', len(path) - 1)
-
-while 1:
-    for i in range(1000):
-        print([bfs('123456000'),'count:',i])
-        if i == 1000:
-            break
+    return path
