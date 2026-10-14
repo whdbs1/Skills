@@ -17,7 +17,7 @@ def aro(n):
 def exc(m,s,e):
     m = list(m)
     m[s],m[e] = m[e],m[s]
-    return''.join(m)
+    return ''.join(m)
 
 def f(m,f):
         for fd in [i for i in range(len(m)) if m[i] == str(f)]:
@@ -59,5 +59,4 @@ def ast():
         cur = par[cur]
     path.append(sm)
     path.reverse()
-
     return path
