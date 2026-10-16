@@ -57,55 +57,55 @@ def astar(sm):
 
     return -1
 
-def random_map():
-    m = list(em)
-    prev = -1
-
-    for _ in range(40):
-        z = [i for i, v in enumerate(m) if v == '0']
-        moves = [
-            (i, n)
-            for i in z
-            for n in aro[i]
-            if m[n] != '0' and n != prev
-        ]
-
-        i, n = random.choice(moves)
-        m[i], m[n] = m[n], m[i]
-        prev = i
-
-    return ''.join(m)
-
-total = 0
-longest = 0
-shortest = float('inf')
-start = time.perf_counter()
-
-for i in range(1, N + 1):
-    sm = random_map()
-
-    t = time.perf_counter()
-    g = astar(sm)
-    elapsed = time.perf_counter() - t
-
-    total += elapsed
-
-    if g > longest:
-        longest = g
-    if g < shortest:
-        shortest = g
-
-    print('{} | 맵: {} | 이동: {} | 탐색시간: {:.6f}초'.format(
-        i, sm, g, elapsed
-    ))
-
-end = time.perf_counter()
-
-print('\n========== 최종 결과 ==========')
-print('총 실행 횟수: {}'.format(N))
-print('평균 탐색시간: {:.6f}초'.format(total / N))
-print('최대 이동 횟수: {}'.format(longest))
-print('최소 이동 횟수: {}'.format(shortest))
-print('전체 실행시간: {:.2f}초'.format(end - start))
-print('================================')
+##def random_map():
+##    m = list(em)
+##    prev = -1
+##
+##    for _ in range(40):
+##        z = [i for i, v in enumerate(m) if v == '0']
+##        moves = [
+##            (i, n)
+##            for i in z
+##            for n in aro[i]
+##            if m[n] != '0' and n != prev
+##        ]
+##
+##        i, n = random.choice(moves)
+##        m[i], m[n] = m[n], m[i]
+##        prev = i
+##
+##    return ''.join(m)
+##
+##total = 0
+##longest = 0
+##shortest = float('inf')
+##start = time.perf_counter()
+##
+##for i in range(1, N + 1):
+##    sm = random_map()
+##
+##    t = time.perf_counter()
+##    g = astar(sm)
+##    elapsed = time.perf_counter() - t
+##
+##    total += elapsed
+##
+##    if g > longest:
+##        longest = g
+##    if g < shortest:
+##        shortest = g
+##
+##    print('{} | 맵: {} | 이동: {} | 탐색시간: {:.6f}초'.format(
+##        i, sm, g, elapsed
+##    ))
+##
+##end = time.perf_counter()
+##
+##print('\n========== 최종 결과 ==========')
+##print('총 실행 횟수: {}'.format(N))
+##print('평균 탐색시간: {:.6f}초'.format(total / N))
+##print('최대 이동 횟수: {}'.format(longest))
+##print('최소 이동 횟수: {}'.format(shortest))
+##print('전체 실행시간: {:.2f}초'.format(end - start))
+##print('================================')
 

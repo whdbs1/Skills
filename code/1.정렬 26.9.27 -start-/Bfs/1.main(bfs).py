@@ -1,6 +1,6 @@
 from collections import deque
 import time
-sm,em = '325671400','123456700'
+sm,em = '700134652','123456700'
 def aro(n):
     li = []
     for x in [-3,+3,-1,+1]:
@@ -42,3 +42,10 @@ def bfs():
     path.append(sm)
 
     return path
+st = time.time()
+bfs()
+et = time.time()
+res = et - st
+
+
+print("실행 시간: {:.5f}초".format(res))
